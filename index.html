@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>дэшборд</title>
+  <meta name="description" content="Дэшборд по жанру хоррор: игры, аниме, фильмы и личная музыкальная статистика.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230b0b0b'/><text x='16' y='23' font-family='monospace' font-size='20' fill='%232e9e60' text-anchor='middle'>&gt;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <a class="skip" href="#stats">К содержимому</a>
+
+  <!-- ==================== ШАПКА ==================== -->
+  <header class="top">
+    <div class="top__in">
+      <h1 class="logo"><span class="logo__caret">&gt;</span> horror_radar</h1>
+
+      <div class="controls">
+        <label class="ctl">
+          <span class="ctl__k">жанр</span>
+          <select id="genre">
+            <option value="Horror">хоррор</option>
+            <option value="Psychological">психологический</option>
+            <option value="Mystery">мистика</option>
+            <option value="Sci-Fi">фантастика</option>
+          </select>
+        </label>
+
+        <button class="btn" id="reload" type="button">обновить</button>
+      </div>
+    </div>
+
+    <!-- строка состояния источников -->
+    <div class="status" id="status" role="status" aria-live="polite">
+      <span class="status__item" data-src="anilist">anilist <b>·</b></span>
+      <span class="status__item" data-src="cheapshark">cheapshark <b>·</b></span>
+      <span class="status__item" data-src="freetogame">freetogame <b>·</b></span>
+      <span class="status__item" data-src="omdb">omdb <b>·</b></span>
+      <span class="status__item" data-src="spotify">spotify <b>·</b></span>
+      <span class="status__clock" id="clock"></span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ==================== СВОДКА ==================== -->
+    <section class="band" id="stats" aria-label="Сводка">
+      <article class="stat">
+        <p class="stat__k">игр со скидкой</p>
+        <p class="stat__v" id="s-deals">—</p>
+        <p class="stat__n" id="s-deals-n">ждём данные</p>
+      </article>
+      <article class="stat">
+        <p class="stat__k">макс. скидка</p>
+        <p class="stat__v" id="s-max">—</p>
+        <p class="stat__n" id="s-max-n">ждём данные</p>
+      </article>
+      <article class="stat">
+        <p class="stat__k">аниме в выборке</p>
+        <p class="stat__v" id="s-anime">—</p>
+        <p class="stat__n" id="s-anime-n">ждём данные</p>
+      </article>
+      <article class="stat">
+        <p class="stat__k">средний балл жанра</p>
+        <p class="stat__v" id="s-score">—</p>
+        <p class="stat__n" id="s-score-n">ждём данные</p>
+      </article>
+    </section>
+
+    <!-- ==================== ГРАФИКИ ==================== -->
+    <section class="band band--2" aria-label="Графики">
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Аниме жанра по годам</h2>
+          <p class="card__src">источник: anilist</p>
+        </header>
+        <div id="c-years" class="card__body"></div>
+      </article>
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Цена против отзывов в Steam</h2>
+          <p class="card__src">источник: cheapshark · каждая точка — игра со скидкой</p>
+        </header>
+        <div id="c-price" class="card__body"></div>
+      </article>
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Оценки Metacritic</h2>
+          <p class="card__src">источник: cheapshark · сколько игр в каждом диапазоне</p>
+        </header>
+        <div id="c-meta" class="card__body"></div>
+      </article>
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Бесплатные игры по платформам</h2>
+          <p class="card__src">источник: freetogame</p>
+        </header>
+        <div id="c-platform" class="card__body"></div>
+      </article>
+
+    </section>
+
+    <!-- ==================== СКИДКИ ==================== -->
+    <section class="band band--1" aria-label="Скидки">
+      <article class="card">
+        <header class="card__h">
+          <h2>Где сейчас дешевле</h2>
+          <p class="card__src">источник: cheapshark · цены живые, обновляются при загрузке</p>
+        </header>
+        <div class="card__body">
+          <div class="tablewrap">
+            <table class="data" id="t-deals">
+              <thead>
+                <tr>
+                  <th data-sort="title">игра</th>
+                  <th data-sort="sale" class="num">цена</th>
+                  <th data-sort="full" class="num">была</th>
+                  <th data-sort="savings" class="num">скидка</th>
+                  <th data-sort="steam" class="num">steam</th>
+                  <th data-sort="metacritic" class="num">meta</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="t-deals-body">
+                <tr><td colspan="7" class="muted">загрузка…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ==================== АНИМЕ И ФИЛЬМЫ ==================== -->
+    <section class="band band--2" aria-label="Аниме и фильмы">
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Аниме жанра</h2>
+          <p class="card__src">источник: anilist · по популярности</p>
+        </header>
+        <div class="card__body"><div class="grid" id="g-anime"></div></div>
+      </article>
+
+      <article class="card">
+        <header class="card__h">
+          <h2>Фильмы жанра</h2>
+          <p class="card__src">источник: omdb · оценка imdb из omdb</p>
+        </header>
+        <div class="card__body"><div class="grid" id="g-movies"></div></div>
+      </article>
+
+    </section>
+
+    <!-- ==================== SPOTIFY ==================== -->
+    <section class="band band--1" aria-label="Моя музыка">
+      <article class="card card--spotify">
+        <header class="card__h">
+          <h2>Моя музыка</h2>
+          <p class="card__src" id="sp-note">источник: spotify</p>
+          <div class="card__act">
+            <button class="btn btn--sm" id="sp-login" type="button">войти в spotify</button>
+            <button class="btn btn--sm" id="sp-save" type="button" hidden>сохранить снимок</button>
+            <button class="btn btn--sm" id="sp-out" type="button" hidden>выйти</button>
+          </div>
+        </header>
+
+        <div class="card__body" id="sp-body">
+          <p class="muted" id="sp-empty">проверяем связь со spotify…</p>
+
+          <div id="sp-content" hidden>
+            <div class="band band--2 nest">
+              <div>
+                <p class="mini">когда я слушаю музыку
+                  <span class="note">по последним 50 прослушиваниям</span>
+                </p>
+                <div id="c-hours"></div>
+              </div>
+              <div>
+                <p class="mini">годы релизов моих треков
+                  <span class="note" id="sp-years-note"></span>
+                </p>
+                <div id="c-years-music"></div>
+              </div>
+            </div>
+
+            <div class="band band--3 nest">
+              <div>
+                <p class="mini">топ артистов
+                  <select id="sp-range" class="inline">
+                    <option value="month">за месяц</option>
+                    <option value="halfYear">за полгода</option>
+                    <option value="allTime">за всё время</option>
+                  </select>
+                </p>
+                <ol class="rank" id="sp-artists"></ol>
+              </div>
+              <div>
+                <p class="mini">топ треков</p>
+                <ol class="rank" id="sp-tracks"></ol>
+              </div>
+              <div>
+                <p class="mini">плейлисты</p>
+                <ol class="rank" id="sp-playlists"></ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- ==================== ФУТЕР ==================== -->
+  <footer class="foot">
+    <p>источники: anilist · cheapshark · freetogame · itunes search · omdb · spotify</p>
+    <p>владимир болтрукевич · <span id="year">2026</span> · сверстано при помощи <strong>claude</strong> (anthropic)</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/spotify.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
